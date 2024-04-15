@@ -1,0 +1,108 @@
+@startuml
+hide footbox
+actor User
+
+participant NUnitTestAssemblyRunner
+participant TestExecutionContext
+participant Listener
+participant SimpleWorkItemDispatcher
+participant CompositeWorkItem
+participant OneTimeSetUpCommand
+participant SimpleWorkItem 
+participant TestMethodCommand
+participant SetUpTearDownCommand
+participant SetUpTearDownItem
+participant ConstructFixtureCommand
+
+User -> NUnitTestAssemblyRunner: StartRun
+NUnitTestAssemblyRunner -> NUnitTestAssemblyRunner: Load tests
+NUnitTestAssemblyRunner -> TestExecutionContext ** : CreateContext
+TestExecutionContext -> Listener : Add
+
+NUnitTestAssemblyRunner -> SimpleWorkItemDispatcher **: Start(context,toplevelitem)
+SimpleWorkItemDispatcher -> CompositeWorkItem: Execute(topLevelWorkItem) [WorkItem]
+note right: Assembly
+activate CompositeWorkItem
+CompositeWorkItem -> CompositeWorkItem: RunOnXThread [WorkItem]
+activate CompositeWorkItem
+CompositeWorkItem -> Listener: TestStarted
+CompositeWorkItem -> CompositeWorkItem: PerformWork
+activate CompositeWorkItem
+CompositeWorkItem -> CompositeWorkItem: If Children>0
+loop for each child
+activate CompositeWorkItem
+CompositeWorkItem -> OneTimeSetUpCommand **: Create
+    CompositeWorkItem -> SimpleWorkItemDispatcher: Dispatch(child)
+    deactivate CompositeWorkItem
+    deactivate CompositeWorkItem
+end 
+deactivate CompositeWorkItem
+deactivate CompositeWorkItem
+
+
+SimpleWorkItemDispatcher -> CompositeWorkItem: Execute()
+note right: Namespace
+activate CompositeWorkItem
+CompositeWorkItem -> Listener: TestStarted
+CompositeWorkItem -> CompositeWorkItem: PerformWork
+activate CompositeWorkItem
+CompositeWorkItem -> CompositeWorkItem: If Children>0
+loop for each child
+activate CompositeWorkItem
+CompositeWorkItem -> OneTimeSetUpCommand **: Create
+CompositeWorkItem -> SimpleWorkItemDispatcher: Dispatch(child)
+deactivate CompositeWorkItem
+deactivate CompositeWorkItem
+deactivate CompositeWorkItem
+end
+
+
+SimpleWorkItemDispatcher -> CompositeWorkItem: Execute()
+note right: Class
+activate CompositeWorkItem
+CompositeWorkItem -> Listener: TestStarted
+CompositeWorkItem -> CompositeWorkItem: PerformWork
+activate CompositeWorkItem
+CompositeWorkItem -> CompositeWorkItem: If Children>0
+loop for each child
+activate CompositeWorkItem
+CompositeWorkItem -> SetUpTearDownItem**: Create
+CompositeWorkItem -> OneTimeSetUpCommand **: Create(item)
+CompositeWorkItem -> ConstructFixtureCommand **: Create(command)
+CompositeWorkItem -> ConstructFixtureCommand : Execute()
+activate ConstructFixtureCommand
+ConstructFixtureCommand -> ConstructFixtureCommand: Run 
+ConstructFixtureCommand -> OneTimeSetUpCommand: Execute()
+activate OneTimeSetUpCommand
+OneTimeSetUpCommand -> SetUpTearDownItem : RunSetUp
+deactivate OneTimeSetUpCommand
+deactivate ConstructFixtureCommand
+deactivate CompositeWorkItem
+CompositeWorkItem -> SimpleWorkItemDispatcher: Dispatch(child)
+deactivate CompositeWorkItem
+deactivate CompositeWorkItem
+end
+
+
+SimpleWorkItemDispatcher -> SimpleWorkItem : Execute()
+note right: TestMethod
+activate SimpleWorkItem
+SimpleWorkItem -> Listener: TestStarted
+SimpleWorkItem -> SimpleWorkItem: PerformWork
+activate SimpleWorkItem
+SimpleWorkItem -> TestMethodCommand **: Create
+SimpleWorkItem -> SetUpTearDownItem **: Create (item)
+SimpleWorkItem -> SetUpTearDownCommand **: Create (command,item)
+deactivate SimpleWorkItem
+
+SimpleWorkItem -> SetUpTearDownCommand : Execute()
+activate SetUpTearDownCommand
+SetUpTearDownCommand -> SetUpTearDownItem : RunSetUp
+SetUpTearDownCommand -> TestMethodCommand : Execute
+deactivate SetUpTearDownCommand
+
+SimpleWorkItem -> Listener: TestFinished
+deactivate SimpleWorkItem
+
+
+@enduml
