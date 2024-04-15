@@ -104,5 +104,11 @@ deactivate SetUpTearDownCommand
 SimpleWorkItem -> Listener: TestFinished
 deactivate SimpleWorkItem
 
+CompositeWorkItem -> Listener: TestFinished
+note right: Class
+CompositeWorkItem -> Listener: TestFinished
+note right: NameSpace
+CompositeWorkItem -> Listener: TestFinished
+note right: Assembly
 
 @enduml
