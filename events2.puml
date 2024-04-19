@@ -1,4 +1,4 @@
-@startuml Events
+@startuml
 hide footbox
 actor external_runner as ER
 participant "FrameworkController" as FC
