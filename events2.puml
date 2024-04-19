@@ -35,11 +35,11 @@ activate NTAR
 NTAR -> TEC** : Create
 NTAR -> TEC : Set(listener)
 alt RunOnMainThread
-NTAR -> MainThreadWorkItemDispatcher : Create
+NTAR -> MainThreadWorkItemDispatcher** : Create
 else RunParallel
-NTAR -> ParallelWorkItemDispatcher : Create
+NTAR -> ParallelWorkItemDispatcher** : Create
 else RunOnThreadPool
-NTAR -> SimpleWorkItemDispatcher : Create
+NTAR -> SWID** : Create
 end
 NTAR -> TEC : Set(dispatcher)
 deactivate NTAR
@@ -50,7 +50,6 @@ note over QEL: Specific to an Event type
 QEL -> EQ**: Create()
 NTAR -> TEC: Set(listener)
 NTAR -> EP**: Create(listener,queue.Events)
-NTAR -> EP** : Create(listener)
 NTAR -> EP : Start()
 NTAR -> SWID : Start(topLevelWorkItem)
 SWID -> WI : Execute
