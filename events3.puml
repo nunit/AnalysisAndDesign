@@ -1,0 +1,21 @@
+@startuml
+hide footbox
+participant AnyWorkItem as WI
+participant QueuingEventListener as QEL <<ITestListener>>
+queue EventQueue as EQ
+control EventPump as EP
+note over EP: Separate thread
+participant Event as E
+participant TestProgressReporter as TPR <<ITestListener>>
+
+WI ->QEL: TestStarted
+QEL -> EQ: Enqueue(TestStartedEvent)
+EP -> EQ: Dequeue
+EQ --> E**: Event
+EQ -> E: Send(listener)
+activate E
+E --> TPR: TestStartedEvent
+activate TPR
+TPR -> TPR: CreateEventMessage
+TPR -> handler: RaiseCallBackEvent(message)
+@enduml

@@ -5,10 +5,9 @@ participant "FrameworkController" as FC
 participant "DefaultTestAssemblyBuilder" as DTAB
 participant "NunitTestAssemblyrunner" as NTAR
 participant "TestProgressReporter" as TPR <<ITestListeeer>> 
-participant "TestExecutionContext" as TEC
-participant "QueuingEventListener" as QEL
+participant "TestExecutionContext" as TEC <<ITestListener>>
+participant "QueuingEventListener" as QEL <<ITestListener>>
 participant "EventQueue" as EQ <<ITestListener>>
-participant "Event" as EV
 participant "EventPump" as EP 
 participant "SimpleWorkItemDispatcher" as SWID
 participant "WorkItem" as WI <<CompositeWorkItem>>
@@ -19,6 +18,7 @@ FC -> DTAB** : Create
 FC -> NTAR** : Create
 ER -> FC : LoadTests()
 FC -> NTAR  : Load
+NTAR -> SWID** : Create TopLevelItem and children
 alt RunTests, no callbackl
 ER -> FC : RunTests(filter)
 else RunTests, with callback
