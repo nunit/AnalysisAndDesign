@@ -9,3 +9,12 @@
 ![](./images/WorkItemHierarchy.jpg)
 
 NOTE: There are more Item classes in the system, but they don't have WorkItem as a parent class. They are not shown here.
+
+## Event hierarchy
+
+![](./images/Event.jpg)
+
+## ITestListener hierarchy
+
+![](./images/ITestListener.jpg)
+
