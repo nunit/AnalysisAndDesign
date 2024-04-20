@@ -9,7 +9,7 @@ In the startup of a run, 10 classes are directly involved, as shown in the seque
 The classes may or may not know about the ITestListener interface and the Event class, which handles the standard NUnit events.
 
 |Class|ITestListener|Event|Comment|How to add event listeners|
-|---|---|---|---|
+|---|---|---|---|---|
 |FrameworkController|No|No|The controller of the test run|NA|
 |DefaultTestAssemblyBuilder|No|No|Builds the test assembly|NA|
 |NunitTestAssemblyRunner|Yes|No|Runs the test assembly|Add Run method, Use generic methods, Split public methods|
